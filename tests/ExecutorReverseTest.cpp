@@ -149,4 +149,14 @@ TEST(ExecutorReverseTest, keeps_reverse_when_fast_is_cancelled)
     const Pose target{1, -3, 'E'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B14: 取消 B 后仍保持加速
+TEST(ExecutorReverseTest, keeps_fast_when_reverse_is_cancelled)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'E'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("BFBM");
+    const Pose target{4, -3, 'E'};
+    ASSERT_EQ(target, executor->Query());
+}
 }  // namespace adas
