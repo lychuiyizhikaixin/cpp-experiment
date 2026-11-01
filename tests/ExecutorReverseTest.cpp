@@ -44,4 +44,14 @@ TEST(ExecutorReverseTest, moves_back_twice_when_fast)
     const Pose target{0, -3, 'E'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B05: BFL 先倒退再右转
+TEST(ExecutorReverseTest, moves_back_before_reverse_left)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'E'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("BFL");
+    const Pose target{1, -3, 'S'};
+    ASSERT_EQ(target, executor->Query());
+}
 }  // namespace adas
