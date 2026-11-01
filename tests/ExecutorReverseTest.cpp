@@ -264,4 +264,19 @@ TEST(ExecutorReverseTest, follows_reverse_route_step_by_step)
     ASSERT_EQ((Pose{-3, -5, 'N'}), executor->Query());
     ASSERT_EQ(whole->Query(), executor->Query());
 }
+
+// B20: 四次倒车转向与取消恢复
+TEST(ExecutorReverseTest, restores_after_full_reverse_turn_cycle)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'N'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("B");
+    for (const Pose target : {Pose{2, -3, 'E'}, Pose{2, -3, 'S'},
+                              Pose{2, -3, 'W'}, Pose{2, -3, 'N'}}) {
+        executor->Execute("L");
+        ASSERT_EQ(target, executor->Query());
+    }
+    executor->Execute("BM");
+    ASSERT_EQ((Pose{2, -2, 'N'}), executor->Query());
+}
 }  // namespace adas
