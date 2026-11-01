@@ -1,5 +1,6 @@
 #pragma once
 #include "Executor.hpp"
+#include "PoseHandler.hpp"
 
 namespace adas {
 class ExecutorImpl final : public Executor {
@@ -10,14 +11,7 @@ public:
     ExecutorImpl& operator=(const ExecutorImpl&) = delete;
     void Execute(const std::string& commands) noexcept override;
     Pose Query() const noexcept override;
-public:
-    void Move() noexcept;
-    void TurnLeft() noexcept;
-    void TurnRight() noexcept;
-    void Fast() noexcept;
-    bool IsFast() const noexcept;
 private:
-    Pose pose;
-    bool fast{false};
+    PoseHandler poseHandler;
 };
 }  // namespace adas
