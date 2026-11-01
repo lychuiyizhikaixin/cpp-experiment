@@ -15,14 +15,10 @@ ExecutorImpl::ExecutorImpl(const Pose& initialPose) noexcept : poseHandler(initi
 void ExecutorImpl::Execute(const std::string& commands) noexcept
 {
     std::unordered_map<char, std::function<void(PoseHandler&)>> commanders;
-    const MoveCommand moveCommand;
-    commanders.emplace('M', moveCommand.operate);
-    const TurnLeftCommand turnLeftCommand;
-    commanders.emplace('L', turnLeftCommand.operate);
-    const TurnRightCommand turnRightCommand;
-    commanders.emplace('R', turnRightCommand.operate);
-    const FastCommand fastCommand;
-    commanders.emplace('F', fastCommand.operate);
+    commanders.emplace('M', MoveCommand{});
+    commanders.emplace('L', TurnLeftCommand{});
+    commanders.emplace('R', TurnRightCommand{});
+    commanders.emplace('F', FastCommand{});
     for (const char command : commands) {
         const auto it = commanders.find(command);
         if (it != commanders.end()) {
