@@ -39,4 +39,11 @@ public:
         poseHandler.Fast();
     }
 };
+class ReverseCommand final {
+public:
+    void operator()(PoseHandler& poseHandler) const noexcept
+    {
+        poseHandler.Reverse();
+    }
+};
 }  // namespace adas

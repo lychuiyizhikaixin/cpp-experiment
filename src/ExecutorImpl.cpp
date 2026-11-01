@@ -19,6 +19,7 @@ void ExecutorImpl::Execute(const std::string& commands) noexcept
         {'L', TurnLeftCommand{}},
         {'R', TurnRightCommand{}},
         {'F', FastCommand{}},
+        {'B', ReverseCommand{}},
     };
     for (const char command : commands) {
         const auto it = commanders.find(command);

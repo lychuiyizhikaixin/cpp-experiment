@@ -8,7 +8,9 @@ PoseHandler::PoseHandler(const Pose& initialPose) noexcept
 }
 void PoseHandler::Move() noexcept
 {
-    point += DIRECTIONS[direction].step;
+    const auto& step = DIRECTIONS[direction].step;
+    const int sign = reverse ? -1 : 1;
+    point += Point{step.GetX() * sign, step.GetY() * sign};
 }
 void PoseHandler::TurnLeft() noexcept
 {
@@ -25,6 +27,10 @@ void PoseHandler::Fast() noexcept
 bool PoseHandler::IsFast() const noexcept
 {
     return fast;
+}
+void PoseHandler::Reverse() noexcept
+{
+    reverse = !reverse;
 }
 Pose PoseHandler::Query() const noexcept
 {
