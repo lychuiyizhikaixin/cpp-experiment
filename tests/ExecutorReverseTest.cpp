@@ -34,4 +34,14 @@ TEST(ExecutorReverseTest, turns_left_for_reverse_right)
     const Pose target{2, -3, 'N'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B04: BFM 加速倒退两格
+TEST(ExecutorReverseTest, moves_back_twice_when_fast)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'E'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("BFM");
+    const Pose target{0, -3, 'E'};
+    ASSERT_EQ(target, executor->Query());
+}
 }  // namespace adas
