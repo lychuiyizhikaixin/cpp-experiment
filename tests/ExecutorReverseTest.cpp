@@ -118,4 +118,25 @@ TEST(ExecutorReverseTest, moves_back_south)
     const Pose target{2, -2, 'S'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B12: 跨调用倒车保持与空输入
+TEST(ExecutorReverseTest, preserves_reverse_across_calls)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({0, 0, 'N'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("B");
+    ASSERT_EQ((Pose{0, 0, 'N'}), executor->Query());
+    executor->Execute("M");
+    ASSERT_EQ((Pose{0, -1, 'N'}), executor->Query());
+    executor->Execute("");
+    ASSERT_EQ((Pose{0, -1, 'N'}), executor->Query());
+    executor->Execute("L");
+    ASSERT_EQ((Pose{0, -1, 'E'}), executor->Query());
+    executor->Execute("M");
+    ASSERT_EQ((Pose{-1, -1, 'E'}), executor->Query());
+    executor->Execute("B");
+    ASSERT_EQ((Pose{-1, -1, 'E'}), executor->Query());
+    executor->Execute("M");
+    ASSERT_EQ((Pose{0, -1, 'E'}), executor->Query());
+}
 }  // namespace adas
