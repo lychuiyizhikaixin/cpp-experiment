@@ -74,4 +74,18 @@ TEST(ExecutorReverseTest, cancels_reverse_after_two_toggles)
     const Pose target{2, -2, 'N'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B08: FB 与 BF 状态正交
+TEST(ExecutorReverseTest, commutes_fast_and_reverse_toggles)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'E'}));
+    ASSERT_NE(nullptr, executor);
+    std::unique_ptr<Executor> other(Executor::NewExecutor({2, -3, 'E'}));
+    ASSERT_NE(nullptr, other);
+    executor->Execute("FBM");
+    other->Execute("BFM");
+    const Pose target{0, -3, 'E'};
+    ASSERT_EQ(target, executor->Query());
+    ASSERT_EQ(target, other->Query());
+}
 }  // namespace adas
