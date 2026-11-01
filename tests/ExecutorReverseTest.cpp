@@ -159,4 +159,17 @@ TEST(ExecutorReverseTest, keeps_fast_when_reverse_is_cancelled)
     const Pose target{4, -3, 'E'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B15: 不同实例倒车状态隔离
+TEST(ExecutorReverseTest, isolates_reverse_between_instances)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({0, 0, 'N'}));
+    ASSERT_NE(nullptr, executor);
+    std::unique_ptr<Executor> normal(Executor::NewExecutor());
+    ASSERT_NE(nullptr, normal);
+    executor->Execute("BM");
+    normal->Execute("M");
+    ASSERT_EQ((Pose{0, -1, 'N'}), executor->Query());
+    ASSERT_EQ((Pose{0, 1, 'N'}), normal->Query());
+}
 }  // namespace adas
