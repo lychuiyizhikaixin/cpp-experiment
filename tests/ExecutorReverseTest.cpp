@@ -196,4 +196,23 @@ TEST(ExecutorReverseTest, covers_reverse_turn_direction_matrix)
         ASSERT_EQ(scenario.target, executor->Query());
     }
 }
+
+// B17: BFM 其余三个方向
+TEST(ExecutorReverseTest, covers_fast_reverse_move_directions)
+{
+    struct Scenario { Pose initial; const char* commands; Pose target; };
+    const Scenario scenarios[]{
+        {{2, -3, 'W'}, "BFM", {4, -3, 'W'}},
+        {{2, -3, 'N'}, "BFM", {2, -5, 'N'}},
+        {{2, -3, 'S'}, "BFM", {2, -1, 'S'}},
+    };
+    for (const auto& scenario : scenarios) {
+        SCOPED_TRACE(scenario.commands);
+        SCOPED_TRACE(scenario.initial.heading);
+        std::unique_ptr<Executor> executor(Executor::NewExecutor(scenario.initial));
+        ASSERT_NE(nullptr, executor);
+        executor->Execute(scenario.commands);
+        ASSERT_EQ(scenario.target, executor->Query());
+    }
+}
 }  // namespace adas
