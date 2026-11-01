@@ -139,4 +139,14 @@ TEST(ExecutorReverseTest, preserves_reverse_across_calls)
     executor->Execute("M");
     ASSERT_EQ((Pose{0, -1, 'E'}), executor->Query());
 }
+
+// B13: 取消 F 后仍保持倒车
+TEST(ExecutorReverseTest, keeps_reverse_when_fast_is_cancelled)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'E'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("BFFM");
+    const Pose target{1, -3, 'E'};
+    ASSERT_EQ(target, executor->Query());
+}
 }  // namespace adas
