@@ -2,7 +2,7 @@
 #include "Command.hpp"
 #include <new>
 #include <unordered_map>
-#include <memory>
+#include <functional>
 
 namespace adas {
 Executor* Executor::NewExecutor(const Pose& initialPose) noexcept
@@ -14,15 +14,19 @@ ExecutorImpl::ExecutorImpl(const Pose& initialPose) noexcept : poseHandler(initi
 }
 void ExecutorImpl::Execute(const std::string& commands) noexcept
 {
-    std::unordered_map<char, std::unique_ptr<ICommand>> commanders;
-    commanders.emplace('M', std::make_unique<MoveCommand>());
-    commanders.emplace('L', std::make_unique<TurnLeftCommand>());
-    commanders.emplace('R', std::make_unique<TurnRightCommand>());
-    commanders.emplace('F', std::make_unique<FastCommand>());
+    std::unordered_map<char, std::function<void(PoseHandler&)>> commanders;
+    const MoveCommand moveCommand;
+    commanders.emplace('M', moveCommand.operate);
+    const TurnLeftCommand turnLeftCommand;
+    commanders.emplace('L', turnLeftCommand.operate);
+    const TurnRightCommand turnRightCommand;
+    commanders.emplace('R', turnRightCommand.operate);
+    const FastCommand fastCommand;
+    commanders.emplace('F', fastCommand.operate);
     for (const char command : commands) {
         const auto it = commanders.find(command);
         if (it != commanders.end()) {
-            it->second->DoOperate(poseHandler);
+            it->second(poseHandler);
         }
     }
 }
