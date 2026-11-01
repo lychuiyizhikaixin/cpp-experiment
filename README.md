@@ -82,3 +82,36 @@ F 切换实例的加速状态；加速 M 调用两次一格 Move，加速 L/R �
 ## 实验三 解耦 表驱动与函数式编程
 
 接续实验二 35 项测试，依次分离命令和状态、完成对象表驱动及函数式实现，再按红灯和绿灯小步实现 B 倒车指令。提交前缀 lab3-Sxx 记录每步测试与推送。
+
+### 实验三最终结构与行为
+
+`ExecutorImpl` 负责字符遍历和查表；`Command.hpp` 中的无状态函数对象通过 `operator()` 组合基本动作；`PoseHandler` 独占 point、direction、fast、reverse；`Direction.hpp` 使用顺时针 E/S/W/N 顺序；`Point.hpp` 提供坐标值与 `operator+=`。Command 仅依赖 PoseHandler，不依赖 ExecutorImpl。公共 Executor 接口与既有 35 项测试均保持原文件字节不变。
+
+B 切换倒车；倒车 M 后退一格，L 右转、R 左转。B 与 F 叠加时 M 两次单格后退，L/R 先单格后退再反向转向。两种状态分别切换，跨调用保存且实例间隔离。
+
+最终表为静态常量 `unordered_map<char, std::function<void(PoseHandler&)>>`，按值持有无状态函数对象；无引用捕获或 this 捕获。首次初始化可能分配内存，内存耗尽仍受现有 noexcept 接口约束；本实验不宣称所有场景均无分配或无异常终止。函数对象修改接收者状态，是函数式风格分派，不等同于无副作用的纯函数。
+
+| 用例 | 输入 | 主要检查 |
+| --- | --- | --- |
+| B01 | `BM` | BM 东向后退一格 |
+| B02 | `BL` | BL 东向反向右转 |
+| B03 | `BR` | BR 东向反向左转 |
+| B04 | `BFM` | BFM 加速倒退两格 |
+| B05 | `BFL` | BFL 先倒退再右转 |
+| B06 | `BFR` | BFR 先倒退再左转 |
+| B07 | `BBM` | BBM 取消倒车 |
+| B08 | `FBM / BFM` | FB 与 BF 状态正交 |
+| B09 | `BM` | BM 西向后退一格 |
+| B10 | `BM` | BM 北向后退一格 |
+| B11 | `BM` | BM 南向后退一格 |
+| B12 | `B / M / empty / L / M / B / M` | 跨调用倒车保持与空输入 |
+| B13 | `BFFM` | 取消 F 后仍保持倒车 |
+| B14 | `BFBM` | 取消 B 后仍保持加速 |
+| B15 | `reverse: BM; normal: M` | 不同实例倒车状态隔离 |
+| B16 | `BL / BR across E S W N` | BL 与 BR 四方向转向矩阵 |
+| B17 | `BFM across W N S` | BFM 其余三个方向 |
+| B18 | `BFL / BFR across E S W N` | BFL 与 BFR 四方向矩阵 |
+| B19 | `BFMLMRM` | 混合倒车轨迹与中间状态 |
+| B20 | `BLLLL / B / M` | 四次倒车转向与取消恢复 |
+
+保留35项、新增20项，共55个GoogleTest用例。B16/B17/B18在各自测试函数内遍历8/3/8行场景，不将场景行数重复计算成GoogleTest用例数。另有干净构建、CTest、7个头文件自包含检查、短指令串独立参考模型对照与ASan/UBSan检查。可执行 `bash script/build_and_run.sh` 复现正式测试。S09和S11故意保存未实现需求的红灯，其余阶段均通过对应回归。
