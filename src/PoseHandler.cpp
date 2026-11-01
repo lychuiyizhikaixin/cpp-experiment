@@ -14,11 +14,13 @@ void PoseHandler::Move() noexcept
 }
 void PoseHandler::TurnLeft() noexcept
 {
-    direction = (direction + 3) % DIRECTIONS.size();
+    const std::size_t offset = reverse ? 1 : 3;
+    direction = (direction + offset) % DIRECTIONS.size();
 }
 void PoseHandler::TurnRight() noexcept
 {
-    direction = (direction + 1) % DIRECTIONS.size();
+    const std::size_t offset = reverse ? 3 : 1;
+    direction = (direction + offset) % DIRECTIONS.size();
 }
 void PoseHandler::Fast() noexcept
 {
