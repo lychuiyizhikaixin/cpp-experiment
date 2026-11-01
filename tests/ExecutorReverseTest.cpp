@@ -64,4 +64,14 @@ TEST(ExecutorReverseTest, moves_back_before_reverse_right)
     const Pose target{1, -3, 'N'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B07: BBM 取消倒车
+TEST(ExecutorReverseTest, cancels_reverse_after_two_toggles)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'N'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("BBM");
+    const Pose target{2, -2, 'N'};
+    ASSERT_EQ(target, executor->Query());
+}
 }  // namespace adas
