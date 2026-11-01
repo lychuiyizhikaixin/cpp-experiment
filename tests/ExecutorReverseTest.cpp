@@ -215,4 +215,28 @@ TEST(ExecutorReverseTest, covers_fast_reverse_move_directions)
         ASSERT_EQ(scenario.target, executor->Query());
     }
 }
+
+// B18: BFL 与 BFR 四方向矩阵
+TEST(ExecutorReverseTest, covers_fast_reverse_turn_direction_matrix)
+{
+    struct Scenario { Pose initial; const char* commands; Pose target; };
+    const Scenario scenarios[]{
+        {{2, -3, 'E'}, "BFL", {1, -3, 'S'}},
+        {{2, -3, 'E'}, "BFR", {1, -3, 'N'}},
+        {{2, -3, 'S'}, "BFL", {2, -2, 'W'}},
+        {{2, -3, 'S'}, "BFR", {2, -2, 'E'}},
+        {{2, -3, 'W'}, "BFL", {3, -3, 'N'}},
+        {{2, -3, 'W'}, "BFR", {3, -3, 'S'}},
+        {{2, -3, 'N'}, "BFL", {2, -4, 'E'}},
+        {{2, -3, 'N'}, "BFR", {2, -4, 'W'}},
+    };
+    for (const auto& scenario : scenarios) {
+        SCOPED_TRACE(scenario.commands);
+        SCOPED_TRACE(scenario.initial.heading);
+        std::unique_ptr<Executor> executor(Executor::NewExecutor(scenario.initial));
+        ASSERT_NE(nullptr, executor);
+        executor->Execute(scenario.commands);
+        ASSERT_EQ(scenario.target, executor->Query());
+    }
+}
 }  // namespace adas
