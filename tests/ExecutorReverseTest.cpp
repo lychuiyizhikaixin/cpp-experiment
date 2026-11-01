@@ -172,4 +172,28 @@ TEST(ExecutorReverseTest, isolates_reverse_between_instances)
     ASSERT_EQ((Pose{0, -1, 'N'}), executor->Query());
     ASSERT_EQ((Pose{0, 1, 'N'}), normal->Query());
 }
+
+// B16: BL 与 BR 四方向转向矩阵
+TEST(ExecutorReverseTest, covers_reverse_turn_direction_matrix)
+{
+    struct Scenario { Pose initial; const char* commands; Pose target; };
+    const Scenario scenarios[]{
+        {{2, -3, 'E'}, "BL", {2, -3, 'S'}},
+        {{2, -3, 'E'}, "BR", {2, -3, 'N'}},
+        {{2, -3, 'S'}, "BL", {2, -3, 'W'}},
+        {{2, -3, 'S'}, "BR", {2, -3, 'E'}},
+        {{2, -3, 'W'}, "BL", {2, -3, 'N'}},
+        {{2, -3, 'W'}, "BR", {2, -3, 'S'}},
+        {{2, -3, 'N'}, "BL", {2, -3, 'E'}},
+        {{2, -3, 'N'}, "BR", {2, -3, 'W'}},
+    };
+    for (const auto& scenario : scenarios) {
+        SCOPED_TRACE(scenario.commands);
+        SCOPED_TRACE(scenario.initial.heading);
+        std::unique_ptr<Executor> executor(Executor::NewExecutor(scenario.initial));
+        ASSERT_NE(nullptr, executor);
+        executor->Execute(scenario.commands);
+        ASSERT_EQ(scenario.target, executor->Query());
+    }
+}
 }  // namespace adas
