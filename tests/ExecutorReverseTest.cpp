@@ -14,4 +14,14 @@ TEST(ExecutorReverseTest, moves_back_east)
     const Pose target{1, -3, 'E'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B02: BL 东向反向右转
+TEST(ExecutorReverseTest, turns_right_for_reverse_left)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'E'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("BL");
+    const Pose target{2, -3, 'S'};
+    ASSERT_EQ(target, executor->Query());
+}
 }  // namespace adas
