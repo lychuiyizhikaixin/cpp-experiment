@@ -54,4 +54,14 @@ TEST(ExecutorReverseTest, moves_back_before_reverse_left)
     const Pose target{1, -3, 'S'};
     ASSERT_EQ(target, executor->Query());
 }
+
+// B06: BFR 先倒退再左转
+TEST(ExecutorReverseTest, moves_back_before_reverse_right)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'E'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("BFR");
+    const Pose target{1, -3, 'N'};
+    ASSERT_EQ(target, executor->Query());
+}
 }  // namespace adas
