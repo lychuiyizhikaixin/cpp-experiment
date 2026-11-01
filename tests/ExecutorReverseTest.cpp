@@ -88,4 +88,14 @@ TEST(ExecutorReverseTest, commutes_fast_and_reverse_toggles)
     ASSERT_EQ(target, executor->Query());
     ASSERT_EQ(target, other->Query());
 }
+
+// B09: BM 西向后退一格
+TEST(ExecutorReverseTest, moves_back_west)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({2, -3, 'W'}));
+    ASSERT_NE(nullptr, executor);
+    executor->Execute("BM");
+    const Pose target{3, -3, 'W'};
+    ASSERT_EQ(target, executor->Query());
+}
 }  // namespace adas
