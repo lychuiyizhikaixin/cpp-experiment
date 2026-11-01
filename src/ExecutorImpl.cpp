@@ -1,6 +1,8 @@
 #include "ExecutorImpl.hpp"
 #include "Command.hpp"
 #include <new>
+#include <unordered_map>
+#include <memory>
 
 namespace adas {
 Executor* Executor::NewExecutor(const Pose& initialPose) noexcept
@@ -12,26 +14,15 @@ ExecutorImpl::ExecutorImpl(const Pose& initialPose) noexcept : poseHandler(initi
 }
 void ExecutorImpl::Execute(const std::string& commands) noexcept
 {
-    const MoveCommand moveCommand;
-    const TurnLeftCommand turnLeftCommand;
-    const TurnRightCommand turnRightCommand;
-    const FastCommand fastCommand;
+    std::unordered_map<char, std::unique_ptr<ICommand>> commanders;
+    commanders.emplace('M', std::make_unique<MoveCommand>());
+    commanders.emplace('L', std::make_unique<TurnLeftCommand>());
+    commanders.emplace('R', std::make_unique<TurnRightCommand>());
+    commanders.emplace('F', std::make_unique<FastCommand>());
     for (const char command : commands) {
-        const ICommand* commander = nullptr;
-        if (command == 'M') {
-            commander = &moveCommand;
-        }
-        else if (command == 'L') {
-            commander = &turnLeftCommand;
-        }
-        else if (command == 'R') {
-            commander = &turnRightCommand;
-        }
-        else if (command == 'F') {
-            commander = &fastCommand;
-        }
-        if (commander != nullptr) {
-            commander->DoOperate(poseHandler);
+        const auto it = commanders.find(command);
+        if (it != commanders.end()) {
+            it->second->DoOperate(poseHandler);
         }
     }
 }
