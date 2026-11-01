@@ -239,4 +239,29 @@ TEST(ExecutorReverseTest, covers_fast_reverse_turn_direction_matrix)
         ASSERT_EQ(scenario.target, executor->Query());
     }
 }
+
+// B19: 混合倒车轨迹与中间状态
+TEST(ExecutorReverseTest, follows_reverse_route_step_by_step)
+{
+    std::unique_ptr<Executor> executor(Executor::NewExecutor({0, 0, 'N'}));
+    ASSERT_NE(nullptr, executor);
+    std::unique_ptr<Executor> whole(Executor::NewExecutor());
+    ASSERT_NE(nullptr, whole);
+    whole->Execute("BFMLMRM");
+    executor->Execute("B");
+    ASSERT_EQ((Pose{0, 0, 'N'}), executor->Query());
+    executor->Execute("F");
+    ASSERT_EQ((Pose{0, 0, 'N'}), executor->Query());
+    executor->Execute("M");
+    ASSERT_EQ((Pose{0, -2, 'N'}), executor->Query());
+    executor->Execute("L");
+    ASSERT_EQ((Pose{0, -3, 'E'}), executor->Query());
+    executor->Execute("M");
+    ASSERT_EQ((Pose{-2, -3, 'E'}), executor->Query());
+    executor->Execute("R");
+    ASSERT_EQ((Pose{-3, -3, 'N'}), executor->Query());
+    executor->Execute("M");
+    ASSERT_EQ((Pose{-3, -5, 'N'}), executor->Query());
+    ASSERT_EQ(whole->Query(), executor->Query());
+}
 }  // namespace adas
