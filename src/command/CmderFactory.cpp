@@ -7,8 +7,9 @@ CmderFactory::CmderFactory()
                {'F', FastCommand{}}, {'B', ReverseCommand{}}, {'Z', TurnRoundCommand{}}}
 {
 }
-CmderList CmderFactory::GetCmders(const std::string& commands) const noexcept
+CmderList CmderFactory::GetCmders(const std::string& commands, VehicleType type) const noexcept
 {
+    (void)type;  // The vehicle entry is in place; vehicle-specific plans come next.
     CmderList result;
     for (const char command : ParseCommandString(commands)) {
         const auto it = cmderMap.find(command);
