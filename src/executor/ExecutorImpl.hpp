@@ -13,6 +13,6 @@ public:
     Pose Query() const noexcept override;
 private:
     PoseHandler poseHandler;
-    VehicleType vehicleType;
+    const VehicleType vehicleType;
 };
 }  // namespace adas
