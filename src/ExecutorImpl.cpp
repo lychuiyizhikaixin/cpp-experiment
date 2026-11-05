@@ -1,8 +1,7 @@
 #include "ExecutorImpl.hpp"
-#include "Command.hpp"
+#include "CmderFactory.hpp"
 #include <new>
-#include <unordered_map>
-#include <functional>
+#include <algorithm>
 
 namespace adas {
 Executor* Executor::NewExecutor(const Pose& initialPose) noexcept
@@ -14,19 +13,10 @@ ExecutorImpl::ExecutorImpl(const Pose& initialPose) noexcept : poseHandler(initi
 }
 void ExecutorImpl::Execute(const std::string& commands) noexcept
 {
-    static const std::unordered_map<char, std::function<void(PoseHandler&)>> commanders{
-        {'M', MoveCommand{}},
-        {'L', TurnLeftCommand{}},
-        {'R', TurnRightCommand{}},
-        {'F', FastCommand{}},
-        {'B', ReverseCommand{}},
-    };
-    for (const char command : commands) {
-        const auto it = commanders.find(command);
-        if (it != commanders.end()) {
-            it->second(poseHandler);
-        }
-    }
+    const auto cmders = Singleton<CmderFactory>::Instance().GetCmders(commands);
+    std::for_each(cmders.begin(), cmders.end(), [this](const Cmder& cmder) noexcept {
+        cmder(poseHandler);
+    });
 }
 Pose ExecutorImpl::Query() const noexcept
 {
