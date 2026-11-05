@@ -1,19 +1,30 @@
 #include "command/CmderFactory.hpp"
 #include "command/Command.hpp"
+#include "command/VehicleCommand.hpp"
 
 namespace adas {
+namespace {
+CmderMap MakeBusMap(const CmderMap& standard)
+{
+    auto result = standard;
+    result.at('L') = BusTurnCommand{true};
+    result.at('R') = BusTurnCommand{false};
+    return result;
+}
+}
 CmderFactory::CmderFactory()
     : cmderMap{{'M', MoveCommand{}}, {'L', TurnLeftCommand{}}, {'R', TurnRightCommand{}},
-               {'F', FastCommand{}}, {'B', ReverseCommand{}}, {'Z', TurnRoundCommand{}}}
+               {'F', FastCommand{}}, {'B', ReverseCommand{}}, {'Z', TurnRoundCommand{}}},
+      busMap(MakeBusMap(cmderMap))
 {
 }
 CmderList CmderFactory::GetCmders(const std::string& commands, VehicleType type) const noexcept
 {
-    (void)type;  // The vehicle entry is in place; vehicle-specific plans come next.
+    const auto& selected = type == VehicleType::Bus ? busMap : cmderMap;
     CmderList result;
     for (const char command : ParseCommandString(commands)) {
-        const auto it = cmderMap.find(command);
-        if (it != cmderMap.end()) {
+        const auto it = selected.find(command);
+        if (it != selected.end()) {
             result.push_back(it->second);
         }
     }

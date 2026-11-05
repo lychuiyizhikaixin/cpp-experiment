@@ -9,6 +9,7 @@
 namespace adas {
 using Cmder = std::function<ActionGroup(PoseHandler&)>;
 using CmderList = std::list<Cmder>;
+using CmderMap = std::unordered_map<char, Cmder>;
 class CmderFactory final {
 public:
     CmderList GetCmders(const std::string& commands, VehicleType type = VehicleType::Normal) const noexcept;
@@ -18,6 +19,7 @@ private:
     friend class Singleton<CmderFactory>;
     CmderFactory();
     std::string ParseCommandString(const std::string& commands) const;
-    const std::unordered_map<char, Cmder> cmderMap;
+    const CmderMap cmderMap;
+    const CmderMap busMap;
 };
 }  // namespace adas
