@@ -11,16 +11,25 @@ CmderMap MakeBusMap(const CmderMap& standard)
     result.at('R') = BusTurnCommand{false};
     return result;
 }
+CmderMap MakeSportsMap(const CmderMap& standard)
+{
+    auto result = standard;
+    result.at('M') = SportsMoveCommand{};
+    result.at('L') = SportsTurnCommand{true};
+    result.at('R') = SportsTurnCommand{false};
+    return result;
+}
 }
 CmderFactory::CmderFactory()
     : cmderMap{{'M', MoveCommand{}}, {'L', TurnLeftCommand{}}, {'R', TurnRightCommand{}},
                {'F', FastCommand{}}, {'B', ReverseCommand{}}, {'Z', TurnRoundCommand{}}},
-      busMap(MakeBusMap(cmderMap))
+      busMap(MakeBusMap(cmderMap)), sportsMap(MakeSportsMap(cmderMap))
 {
 }
 CmderList CmderFactory::GetCmders(const std::string& commands, VehicleType type) const noexcept
 {
-    const auto& selected = type == VehicleType::Bus ? busMap : cmderMap;
+    const auto& selected = type == VehicleType::Bus ? busMap :
+                           type == VehicleType::SportsCar ? sportsMap : cmderMap;
     CmderList result;
     for (const char command : ParseCommandString(commands)) {
         const auto it = selected.find(command);

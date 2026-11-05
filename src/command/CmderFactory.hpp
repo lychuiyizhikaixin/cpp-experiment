@@ -21,5 +21,6 @@ private:
     std::string ParseCommandString(const std::string& commands) const;
     const CmderMap cmderMap;
     const CmderMap busMap;
+    const CmderMap sportsMap;
 };
 }  // namespace adas
