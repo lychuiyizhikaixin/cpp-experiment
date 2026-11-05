@@ -1,5 +1,5 @@
 #pragma once
-#include "PoseHandler.hpp"
+#include "ActionGroup.hpp"
 #include "Singleton.hpp"
 #include <functional>
 #include <list>
@@ -7,7 +7,7 @@
 #include <unordered_map>
 
 namespace adas {
-using Cmder = std::function<void(PoseHandler&)>;
+using Cmder = std::function<ActionGroup(PoseHandler&)>;
 using CmderList = std::list<Cmder>;
 class CmderFactory final {
 public:

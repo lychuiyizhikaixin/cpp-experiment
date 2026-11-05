@@ -14,9 +14,6 @@ public:
     void RotateLeft() noexcept;
     void RotateRight() noexcept;
     bool IsReverse() const noexcept;
-    void Move() noexcept;
-    void TurnLeft() noexcept;
-    void TurnRight() noexcept;
     void Fast() noexcept;
     void Reverse() noexcept;
     bool IsFast() const noexcept;

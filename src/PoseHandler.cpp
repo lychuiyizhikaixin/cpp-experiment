@@ -27,22 +27,6 @@ bool PoseHandler::IsReverse() const noexcept
 {
     return reverse;
 }
-void PoseHandler::Move() noexcept
-{
-    const auto& step = DIRECTIONS[direction].step;
-    const int sign = reverse ? -1 : 1;
-    point += Point{step.GetX() * sign, step.GetY() * sign};
-}
-void PoseHandler::TurnLeft() noexcept
-{
-    const std::size_t offset = reverse ? 1 : 3;
-    direction = (direction + offset) % DIRECTIONS.size();
-}
-void PoseHandler::TurnRight() noexcept
-{
-    const std::size_t offset = reverse ? 3 : 1;
-    direction = (direction + offset) % DIRECTIONS.size();
-}
 void PoseHandler::Fast() noexcept
 {
     fast = !fast;
