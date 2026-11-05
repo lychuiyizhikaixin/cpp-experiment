@@ -36,6 +36,19 @@ public:
         return result;
     }
 };
+class TurnRoundCommand final {
+public:
+    ActionGroup operator()(const PoseHandler& pose) const
+    {
+        if (pose.IsReverse()) { return {}; }
+        ActionGroup result;
+        if (pose.IsFast()) { result.PushAction(ActionType::Forward); }
+        result.PushAction(ActionType::TurnLeft);
+        result.PushAction(ActionType::Forward);
+        result.PushAction(ActionType::TurnLeft);
+        return result;
+    }
+};
 class FastCommand final {
 public:
     ActionGroup operator()(const PoseHandler&) const { return {ActionType::Fast}; }

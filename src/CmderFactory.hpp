@@ -17,6 +17,7 @@ public:
 private:
     friend class Singleton<CmderFactory>;
     CmderFactory();
+    std::string ParseCommandString(const std::string& commands) const;
     const std::unordered_map<char, Cmder> cmderMap;
 };
 }  // namespace adas
