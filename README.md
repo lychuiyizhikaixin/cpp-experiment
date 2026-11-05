@@ -1,4 +1,8 @@
-# 实验 1 高质量编程基础
+# C++车辆指令执行器
+
+当前版本为实验四综合实战，完成TR掉头、动作编排及Normal、Bus、SportsCar三种车型。242项GoogleTest通过，包含实验三原有55项。当前规则和验证方法见文末“实验四综合实战”，前面的章节保留各次实验过程。
+
+## 实验一 高质量编程基础
 
 基于课程初始工程实现 ADAS 车辆执行器。坐标使用 `std::int32_t`，朝向为 N、E、S、W，指令 M 前进一步，L/R 原地左转或右转 90 度。调用方保证参数合法，按课件约束不覆盖非法输入与整数溢出。
 
@@ -119,3 +123,65 @@ B 切换倒车；倒车 M 后退一格，L 右转、R 左转。B 与 F 叠加时
 ## 实验四实施计划
 
 以实验三的 55 项测试为回归基线，按小步骤完成指令工厂、八种原子操作、动作编排、TR 掉头及目录重组；然后实现课件作业中的 Bus 和 SportsCar。每步重新构建测试，分别提交并推送。TR 在倒车时忽略，以课件第 39–42 页的示例为准。
+
+## 实验四综合实战
+
+课件任务包括指令工厂、八种原子操作、TR掉头和目录整理，作业扩展Bus与SportsCar。
+
+```cpp
+std::unique_ptr<adas::Executor> normal(adas::Executor::NewExecutor({2, -3, 'E'}));
+std::unique_ptr<adas::Executor> bus(
+    adas::Executor::NewExecutor({2, -3, 'E'}, adas::VehicleType::Bus));
+std::unique_ptr<adas::Executor> sports(
+    adas::Executor::NewExecutor({2, -3, 'E'}, adas::VehicleType::SportsCar));
+sports->Execute("BFL");  // (1, -2, S)
+```
+
+### 结构
+
+- `include/Executor.hpp`：公共接口、Pose及VehicleType，保留原工厂入口并新增车型重载。
+- `src/executor/`：执行器，每条命令执行时生成动作组再执行。
+- `src/command/`：解析TR、注册指令表、普通与车型命令编排。
+- `src/action/`：ActionGroup及八种原子操作。
+- `src/model/`：Point、Direction和每辆车的PoseHandler状态。
+- `src/common/`：Singleton模板，工厂只保存可调用值与只读映射。
+- `tests/data/VehicleCases.hpp`：96行车型方向与状态预期，独立于测试逻辑。
+
+### TR与车型规则
+
+TR连续出现才构成掉头，普通状态依次左转、前进一格、左转；F状态在最前面增加一格前进。B状态下忽略整个TR，以课件39至42页的测试与实现为准。解析器用内部Z标记TR，输入的字面Z不构成公开指令。跨两次Execute输入T和R不会拼成TR。未给出不同车型TR差异，因此三种车型共用以上原子规则。
+
+以下动作均按顺序执行。F/B分别切换并跨调用保持，实例间互不影响。Bus坐标为车头，不额外模拟车尾碰撞。
+
+| 车型 | 状态 | M | L | R |
+| --- | --- | --- | --- | --- |
+| Normal | 普通 | 前进1 | 左转 | 右转 |
+| Normal | B | 后退1 | 右转 | 左转 |
+| Normal | F | 前进1、前进1 | 前进1、左转 | 前进1、右转 |
+| Normal | BF | 后退1、后退1 | 后退1、右转 | 后退1、左转 |
+| Bus | 普通 | 前进1 | 前进1、左转 | 前进1、右转 |
+| Bus | B | 后退1 | 后退1、右转 | 后退1、左转 |
+| Bus | F | 前进1、前进1 | 前进1、前进1、左转 | 前进1、前进1、右转 |
+| Bus | BF | 后退1、后退1 | 后退1、后退1、右转 | 后退1、后退1、左转 |
+| SportsCar | 普通 | 前进1两次 | 左转、前进1 | 右转、前进1 |
+| SportsCar | B | 后退1两次 | 右转、后退1 | 左转、后退1 |
+| SportsCar | F | 前进1四次 | 前进1、左转、前进1 | 前进1、右转、前进1 |
+| SportsCar | BF | 后退1四次 | 后退1、右转、后退1 | 后退1、左转、后退1 |
+
+### 测试与复现
+
+```bash
+bash script/build_and_run.sh
+ctest --test-dir build --output-on-failure
+bash script/validate_lab4.sh build
+```
+
+最后一个脚本除242项正式测试外，还运行独立参考程序。参考程序只使用公开Executor接口，采用字符朝向和switch描述规则，枚举六种完整指令M/L/R/F/B/TR的0至4长度、三种车型与四个初始朝向，共18660组，比较逐前缀及整串调用结果。它不复用生产方向表或动作编排。
+
+在macOS下，脚本从CMakeCache读取实际编译器与SDK路径，显式给独立链接命令传入同一SDK，避免工具默认选到不兼容的新SDK。初次独立链接曾因默认MacOSX27.0.sdk报unknown architecture，使用项目的MacOSX.sdk别名后通过。
+
+另已通过干净Debug构建、10个生产头文件独立包含编译和ASan/UBSan的242项测试。macOS下LeakSanitizer关闭，未宣称完成全部泄漏检查。测试未覆盖非法朝向、坐标溢出、资源耗尽或并发修改同一车辆。
+
+### 提交过程
+
+实验四使用lab4-S01至lab4-S14记录14个步骤，每步分别提交和推送。S05保存TR的3项预期失败，S09保存Bus转弯的2项预期失败，S11保存SportsCar的2项预期失败，相应实现步骤恢复通过。实验三的55项测试在所有阶段始终通过，三个原测试源文件保持字节不变。
