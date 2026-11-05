@@ -1,6 +1,6 @@
 #pragma once
 #include "Executor.hpp"
-#include "Point.hpp"
+#include "model/Point.hpp"
 #include <cstddef>
 
 namespace adas {

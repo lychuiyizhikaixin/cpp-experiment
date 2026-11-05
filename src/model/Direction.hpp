@@ -1,5 +1,5 @@
 #pragma once
-#include "Point.hpp"
+#include "model/Point.hpp"
 #include <array>
 #include <cstddef>
 

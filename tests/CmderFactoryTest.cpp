@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/CmderFactory.hpp"
+#include "command/CmderFactory.hpp"
 #include "PoseEq.hpp"
 
 namespace adas {

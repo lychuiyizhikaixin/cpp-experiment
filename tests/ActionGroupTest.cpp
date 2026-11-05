@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../src/ActionGroup.hpp"
+#include "action/ActionGroup.hpp"
 #include "PoseEq.hpp"
 
 namespace adas {

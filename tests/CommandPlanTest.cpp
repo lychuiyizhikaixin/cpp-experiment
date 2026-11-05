@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 #include <memory>
-#include "../src/Command.hpp"
+#include "command/Command.hpp"
 #include "PoseEq.hpp"
 
 namespace adas {

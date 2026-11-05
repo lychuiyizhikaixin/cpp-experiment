@@ -1,6 +1,6 @@
 #pragma once
-#include "ActionGroup.hpp"
-#include "Singleton.hpp"
+#include "action/ActionGroup.hpp"
+#include "common/Singleton.hpp"
 #include <functional>
 #include <list>
 #include <string>

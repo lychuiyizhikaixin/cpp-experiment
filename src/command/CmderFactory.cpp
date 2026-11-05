@@ -1,5 +1,5 @@
-#include "CmderFactory.hpp"
-#include "Command.hpp"
+#include "command/CmderFactory.hpp"
+#include "command/Command.hpp"
 
 namespace adas {
 CmderFactory::CmderFactory()

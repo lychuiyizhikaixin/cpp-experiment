@@ -1,5 +1,5 @@
 #pragma once
-#include "ActionGroup.hpp"
+#include "action/ActionGroup.hpp"
 
 namespace adas {
 inline ActionType Movement(const PoseHandler& pose) noexcept

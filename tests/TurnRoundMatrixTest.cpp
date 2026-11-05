@@ -3,8 +3,8 @@
 #include <string>
 #include "Executor.hpp"
 #include "PoseEq.hpp"
-#include "../src/Command.hpp"
-#include "../src/CmderFactory.hpp"
+#include "command/Command.hpp"
+#include "command/CmderFactory.hpp"
 
 namespace adas {
 struct TurnRoundCase { char heading; const char* input; Pose target; };

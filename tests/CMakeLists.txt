@@ -4,5 +4,6 @@ ADD_SUBDIRECTORY(googletest EXCLUDE_FROM_ALL)
 AUX_SOURCE_DIRECTORY(. SOURCE)
 ADD_EXECUTABLE(training_main ${SOURCE})
 TARGET_LINK_LIBRARIES(training_main training gtest_main)
+TARGET_INCLUDE_DIRECTORIES(training_main PRIVATE "${CMAKE_SOURCE_DIR}/src")
 
 ADD_TEST(NAME training_main COMMAND training_main)

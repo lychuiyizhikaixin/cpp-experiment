@@ -1,11 +1,5 @@
-SET(INCLUDE ${CMAKE_SOURCE_DIR}/include)
-
-FILE(GLOB SOURCE "*.cpp")
-LIST(REMOVE_ITEM SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/Main.cpp)
-LIST(REMOVE_ITEM SOURCE ${CMAKE_CURRENT_SOURCE_DIR}/main.cpp)
-
-ADD_COMPILE_OPTIONS("-Wall")
-ADD_COMPILE_OPTIONS("-Werror")
-ADD_LIBRARY(training ${SOURCE})
-
-TARGET_INCLUDE_DIRECTORIES(training PUBLIC "${INCLUDE}")
+file(GLOB_RECURSE SOURCE CONFIGURE_DEPENDS "*.cpp")
+add_library(training ${SOURCE})
+target_include_directories(training PUBLIC "${CMAKE_SOURCE_DIR}/include"
+                                    PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}")
+target_compile_options(training PRIVATE -Wall -Werror)

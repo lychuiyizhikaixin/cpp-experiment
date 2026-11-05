@@ -1,5 +1,5 @@
-#include "PoseHandler.hpp"
-#include "Direction.hpp"
+#include "model/PoseHandler.hpp"
+#include "model/Direction.hpp"
 
 namespace adas {
 PoseHandler::PoseHandler(const Pose& initialPose) noexcept
