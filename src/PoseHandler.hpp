@@ -9,6 +9,11 @@ public:
     explicit PoseHandler(const Pose& initialPose) noexcept;
     PoseHandler(const PoseHandler&) = delete;
     PoseHandler& operator=(const PoseHandler&) = delete;
+    void Forward() noexcept;
+    void Backward() noexcept;
+    void RotateLeft() noexcept;
+    void RotateRight() noexcept;
+    bool IsReverse() const noexcept;
     void Move() noexcept;
     void TurnLeft() noexcept;
     void TurnRight() noexcept;
